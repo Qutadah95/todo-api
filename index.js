@@ -1,7 +1,12 @@
-const Joi = require('joi');
+// const Joi = require('joi');
 
 const express = require('express');
 const app = express();
+const cors = require('cors');
+
+app.use(cors())
+require('dotenv').config();
+
 app.use(express.json());
 const users = [
     { id: 1, userName: "qutadah", password: 'qut@123' },
@@ -22,12 +27,7 @@ app.get(('/api/users/:id'), (req, res) => {
 
 app.post('/api/users', (req, res) => {
 
-    // const schema = {
-    //     userName: Joi.require(),
-    //     password: Joi.require(),
-    // };
-    // const result=Joi.validate(req.body,schema);
-    // console.log(result);
+ 
     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
         res.status(400).send('User name and password should be more then 3 latter');
         return;

@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/Qutadah95/todo-api#readme",
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.2",
     "express": "^4.18.1",
     "joi": "^13.1.0"
   }
