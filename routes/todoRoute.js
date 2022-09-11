@@ -18,6 +18,12 @@ router.route("/list").get((req,res)=>{
 
    Todo.find().then(foundTodo=>res.json(foundTodo))
 });
+router.delete("/delete/:id", (req, res) => {
+    console.log(req.params);
+    Todo.findByIdAndDelete({ _id: req.params.id })
+      .then((doc) => console.log(doc))
+      .catch((err) => console.log(err));
+  });
 
 
 module.exports=router;
