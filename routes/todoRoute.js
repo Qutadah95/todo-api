@@ -1,7 +1,7 @@
 const express=require('express')
 const router=express.Router()
 const Todo = require("../models/todoModels")
-
+const Schemas=require("../models/Schema")
 
 router.route("/create").post((req,res)=>{
 
@@ -12,6 +12,31 @@ router.route("/create").post((req,res)=>{
         isComplet
     })
     newTodo.save();
+});
+
+
+router.post('/addTodo', async (req, res) => {
+  const userTodo = req.body.todo;
+  console.log(userTodo,"userTodo");
+  const user = Schemas.Users;
+  const userId = await user.findOne({username:'qutadah'}).exec();
+
+  const newTodo = new Schemas.Todos({
+      todo: userTodo,
+      user: userId._id
+  });
+
+  try {
+      await newTodo.save( (err) => {
+          if (err) res.end('Error Saving.');
+          res.redirect('/list');
+          res.end();
+      });
+  } catch(err) {
+      console.log(err);
+      res.redirect('/list');
+      res.end();
+  }
 });
 router.route("/list").get((req,res)=>{
 

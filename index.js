@@ -124,6 +124,8 @@ app.post("/api/login", (req, res) => {
   } else {
     res.status(400).json("Username or password incorrect!");
   }
+  console.log(user);
+
 });
 
 const verify = (req, res, next) => {
@@ -160,7 +162,7 @@ app.post("/api/logout", verify, (req, res) => {
 
 
 
-mongoose.connect("mongodb+srv://qutadah:qutadah123@cluster0.oxjhta3.mongodb.net/todoDB")
+mongoose.connect("mongodb+srv://qutadah:qutadah123@cluster0.oxjhta3.mongodb.net/todoDB", {useNewUrlParser:true, useUnifiedTopology:true})
 
 app.use("/",require("./routes/todoRoute"))
 
