@@ -10,12 +10,13 @@ app.use(cors())
 require('dotenv').config();
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
+const Schema=require("./models/Schema")
 
-const users = [
-    { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
-    { id: 2, username: "qutadah1", password: 'qut@123' ,isAdmin: false},
-    { id: 3, username: "qutadah2", password: 'qut@123' ,isAdmin: false},
-]
+// const users = [
+//     { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
+//     { id: 2, username: "qutadah1", password: 'qut@123' ,isAdmin: false},
+//     { id: 3, username: "qutadah2", password: 'qut@123' ,isAdmin: false},
+// ]
 app.get(('/'), (req, res) => {
     res.send('Hello World!!!!');
 }); 
@@ -28,7 +29,7 @@ app.post("/api/refresh", (req, res) => {
 
   //send error if there is no token or it's invalid
   if (!refreshToken) return res.status(401).json("You are not authenticated!");
-  if (!refreshTokens.includes(refreshToken)) {
+  if (!refreshTokens.includes(refreshToken)) { 
     return res.status(403).json("Refresh token is not valid!");
   }
   jwt.verify(refreshToken, "myRefreshSecretKey", (err, user) => {
@@ -60,10 +61,16 @@ const generateRefreshToken = (user) => {
 };
 
 app.post("/api/login", (req, res) => {
+  console.log("u")
   const { username, password } = req.body;
-  const user = users.find((u) => {
-    return u.username === username && u.password === password;
-  });
+
+  const user =Schema.Users.find({}, (err,userr)=>{
+    return( userr.username === username && userr.password === password)
+  
+  })
+  // const user = users.find((u) => {
+  //   return( u.username === username && u.password === password)
+  // });
   if (user) {
     //Generate an access token
     const accessToken = generateAccessToken(user);
@@ -78,7 +85,7 @@ app.post("/api/login", (req, res) => {
   } else {
     res.status(400).json("Username or password incorrect!");
   }
-  console.log(user);
+  // console.log(user);
 
 });
 
