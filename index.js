@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors())
 require('dotenv').config();
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
 
 const users = [
     { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
@@ -16,55 +18,7 @@ const users = [
 ]
 app.get(('/'), (req, res) => {
     res.send('Hello World!!!!');
-});
-// app.get(('/api/users'), (req, res) => {
-//     res.send(users);
-// });
-// app.get(('/api/users/:id'), (req, res) => {
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     res.send(user);
-// });
-
-// app.post('/api/users', (req, res) => {
-
- 
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     const user = {
-//         id: users.length + 1,
-//         userName: req.body.userName,
-//         password: req.body.password,
-//     };
-//     users.push(user);
-//     res.send(user);
-// });
-
-// app.put('/api/users/:id',(req,res)=>{
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     user.userName=req.body.userName;
-//     user.password=req.body.password;
-//     res.send(user);
-// });
-// app.delete('/api/users/:id',(req,res)=>{
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     const index=users.indexOf(user);
-//     users.splice(index,1);
-//     res.send(user);
-
-// });
+}); 
 
 let refreshTokens = [];
 
