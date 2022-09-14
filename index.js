@@ -7,16 +7,12 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors())
-require('dotenv').config();
+// require('dotenv').config();
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const Schema=require("./models/Schema")
+const bcrypt=require('bcrypt')
 
-// const users = [
-//     { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
-//     { id: 2, username: "qutadah1", password: 'qut@123' ,isAdmin: false},
-//     { id: 3, username: "qutadah2", password: 'qut@123' ,isAdmin: false},
-// ]
 app.get(('/'), (req, res) => {
     res.send('Hello World!!!!');
 }); 
@@ -33,7 +29,7 @@ app.post("/api/refresh", (req, res) => {
     return res.status(403).json("Refresh token is not valid!");
   }
   jwt.verify(refreshToken, "myRefreshSecretKey", (err, user) => {
-    err && console.log(err);
+    err ;
     refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
 
     const newAccessToken = generateAccessToken(user);
@@ -51,41 +47,44 @@ app.post("/api/refresh", (req, res) => {
 });
 
 const generateAccessToken = (user) => {
-  return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, "mySecretKey", {
+  return jwt.sign({ id: user.id }, "mySecretKey", {
     expiresIn: "5s",
   });
 };
 
 const generateRefreshToken = (user) => {
-  return jwt.sign({ id: user.id, isAdmin: user.isAdmin }, "myRefreshSecretKey");
+  return jwt.sign({ id: user.id }, "myRefreshSecretKey");
 };
+const handelHashPassword=async (pass)=>{
 
-app.post("/api/login", (req, res) => {
-  console.log("u")
+  const salt= await bcrypt.genSalt();
+  
+  const hashPassword= await bcrypt.hash(pass,salt);
+  return hashPassword;
+  // next();
+}
+app.post("/api/login",  (req, res) => {
   const { username, password } = req.body;
 
-  const user =Schema.Users.find({}, (err,userr)=>{
-    return( userr.username === username && userr.password === password)
+  const user = Schema.Users.find({username: username, password:handelHashPassword(password)});
+  //   const user =Schema.Users.find({}, (err,userr)=>{
+  //   return( userr.username === username && bcrypt.compare(password,userr.password))
   
-  })
-  // const user = users.find((u) => {
-  //   return( u.username === username && u.password === password)
-  // });
+  // })
+
   if (user) {
     //Generate an access token
     const accessToken = generateAccessToken(user);
     const refreshToken = generateRefreshToken(user);
+    console.log(username);
     refreshTokens.push(refreshToken);
     res.json({
-      username: user.username,
-      isAdmin: user.isAdmin,
       accessToken,
       refreshToken,
     });
   } else {
     res.status(400).json("Username or password incorrect!");
   }
-  // console.log(user);
 
 });
 
@@ -115,12 +114,10 @@ app.delete("/api/users/:userId", verify, (req, res) => {
   }
 });
 
-app.post("/api/logout", verify, (req, res) => {
-  const refreshToken = req.body.token;
-  refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-  res.status(200).json("You logged out successfully.");
-});
 
+app.get("/api/logout", (req, res) => {
+ console.log('logged out');
+});
 
 
 mongoose.connect("mongodb+srv://qutadah:qutadah123@cluster0.oxjhta3.mongodb.net/todoDB", {useNewUrlParser:true, useUnifiedTopology:true})
