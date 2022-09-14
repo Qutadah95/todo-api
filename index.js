@@ -8,63 +8,18 @@ const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors())
 require('dotenv').config();
+const bodyParser = require('body-parser')
+app.use(bodyParser.json())
+const Schema=require("./models/Schema")
 
-const users = [
-    { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
-    { id: 2, username: "qutadah1", password: 'qut@123' ,isAdmin: false},
-    { id: 3, username: "qutadah2", password: 'qut@123' ,isAdmin: false},
-]
+// const users = [
+//     { id: 1, username: "qutadah", password: 'qut@123',isAdmin: true },
+//     { id: 2, username: "qutadah1", password: 'qut@123' ,isAdmin: false},
+//     { id: 3, username: "qutadah2", password: 'qut@123' ,isAdmin: false},
+// ]
 app.get(('/'), (req, res) => {
     res.send('Hello World!!!!');
-});
-// app.get(('/api/users'), (req, res) => {
-//     res.send(users);
-// });
-// app.get(('/api/users/:id'), (req, res) => {
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     res.send(user);
-// });
-
-// app.post('/api/users', (req, res) => {
-
- 
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     const user = {
-//         id: users.length + 1,
-//         userName: req.body.userName,
-//         password: req.body.password,
-//     };
-//     users.push(user);
-//     res.send(user);
-// });
-
-// app.put('/api/users/:id',(req,res)=>{
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     user.userName=req.body.userName;
-//     user.password=req.body.password;
-//     res.send(user);
-// });
-// app.delete('/api/users/:id',(req,res)=>{
-//     const user = users.find(c => c.id == req.params.id)
-//     if (!user) res.status(404).send("the user with ID didn't find");
-//     if (!req.body.userName && !req.body.password || req.body.userName.length < 3 && req.body.password.length < 3) {
-//         res.status(400).send('User name and password should be more then 3 latter');
-//         return;
-//     }
-//     const index=users.indexOf(user);
-//     users.splice(index,1);
-//     res.send(user);
-
-// });
+}); 
 
 let refreshTokens = [];
 
@@ -74,7 +29,7 @@ app.post("/api/refresh", (req, res) => {
 
   //send error if there is no token or it's invalid
   if (!refreshToken) return res.status(401).json("You are not authenticated!");
-  if (!refreshTokens.includes(refreshToken)) {
+  if (!refreshTokens.includes(refreshToken)) { 
     return res.status(403).json("Refresh token is not valid!");
   }
   jwt.verify(refreshToken, "myRefreshSecretKey", (err, user) => {
@@ -106,10 +61,16 @@ const generateRefreshToken = (user) => {
 };
 
 app.post("/api/login", (req, res) => {
+  console.log("u")
   const { username, password } = req.body;
-  const user = users.find((u) => {
-    return u.username === username && u.password === password;
-  });
+
+  const user =Schema.Users.find({}, (err,userr)=>{
+    return( userr.username === username && userr.password === password)
+  
+  })
+  // const user = users.find((u) => {
+  //   return( u.username === username && u.password === password)
+  // });
   if (user) {
     //Generate an access token
     const accessToken = generateAccessToken(user);
@@ -124,7 +85,7 @@ app.post("/api/login", (req, res) => {
   } else {
     res.status(400).json("Username or password incorrect!");
   }
-  console.log(user);
+  // console.log(user);
 
 });
 
