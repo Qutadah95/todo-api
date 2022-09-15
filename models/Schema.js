@@ -11,6 +11,7 @@ const userSchema = new Schema({
 
 const todoSchema = new Schema({
     todo: { type: String, required: true },
+    state:{type:Boolean},
     user: { type: Schema.Types.ObjectId, ref: 'users' }
 });
 

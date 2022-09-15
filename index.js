@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 app.use(express.json());
 app.use(cors())
-// require('dotenv').config();
+require('dotenv').config();
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 const Schema=require("./models/Schema")
@@ -114,9 +114,15 @@ app.delete("/api/users/:userId", verify, (req, res) => {
   }
 });
 
-
+// app.post("/api/logout", verify, (req, res) => {
+//   const refreshToken = req.body.token;
+//   refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+//   res.status(200).json("You logged out successfully.");
+// });
 app.get("/api/logout", (req, res) => {
+//  res.cookie('user-info',"");
  console.log('logged out');
+//  res.redirect('/')
 });
 
 

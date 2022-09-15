@@ -36,6 +36,7 @@ router.post('/addTodo', async (req, res) => {
   const userId = await user.findOne({ username: `${req.query.userNameS}` }).exec();
   const newTodo = new Schemas.Todos({
     todo: userTodo,
+    state:false,
     user: userId._id
   });
   console.log(newTodo);
@@ -75,12 +76,22 @@ router.delete("/delete/:id", (req, res) => {
 });
 
 router.put("/update/:id", (req, res) => {
-  Schemas.Todos.findByIdAndUpdate(
+  Schemas.Todos.updateMany(
     { _id: req.params.id },
     {
       todo: req.body.todo,
-    }
+      state:req.body.state
+    },
+    
+
   ).then((doc) => console.log(doc)).catch((err) => console.log(err));
+});
+router.put("/updateState/:id", async (req, res) => {
+  console.log("req.body.state",req.query.state);
+  let data= await Schemas.Todos.updateOne(
+    { _id: req.params.id },
+   {state:req.query.state},)
+   res.send(data)
 });
 
 module.exports = router;
